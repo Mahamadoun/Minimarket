@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Market - HMA Distribution</title>
+    <meta name="description" content="Mini Market HMA Distribution - Votre supermarché de proximité pour tous vos besoins quotidiens.">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Notre CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Header / Navbar -->
+    <header class="header">
+        <div class="container">
+            <div class="navbar">
+                <div class="logo">
+                    <a href="index.html">
+                        <img src="/img/minimarketlogo.jpg" alt="Logo HMA" class="logo-icon" />
+                        <div class="logo-text">
+                            <h1>MINI MARKET</h1>
+                            <p>HMA Distribution</p>
+                        </div>
+                    </a>
+                </div>
+                <nav>
+                    <ul class="menu">
+                        <li><a href="#" class="active">Accueil</a></li>
+                        <li><a href="#all-products">Produits</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                        <li><a href="#sociales">Sociales</a></li>
+                    </ul>
+                </nav>
+                <div class="cart-icon" id="cart-toggler">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-count" id="cart-count">0</span>
+                </div>
+                <div class="hamburger" id="hamburger-menu">
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Search Section -->
+    <section class="search-section">
+        <div class="container">
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="Rechercher des produits...">
+                <button id="search-btn">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Category Filter -->
+    <section class="category-filter">
+        <div class="container">
+            <div class="category-wrapper" id="category-wrapper">
+                <button class="category-btn active" data-category="all">Tous</button>
+                <!-- Les catégories seront ajoutées dynamiquement ici -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main>
+        <div class="container">
+            <!-- All Products -->
+            <section class="product-section" id="all-products">
+                <div class="section-header">
+                    <h2>Tous nos produits</h2>
+                </div>
+                <div class="products-grid" id="all-products-grid">
+                    <!-- Products will be loaded here dynamically -->
+                    <div class="product-skeleton"></div>
+                    <div class="product-skeleton"></div>
+                    <div class="product-skeleton"></div>
+                    <div class="product-skeleton"></div>
+                    <div class="product-skeleton"></div>
+                    <div class="product-skeleton"></div>
+                    <div class="product-skeleton"></div>
+                    <div class="product-skeleton"></div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Contact Section -->
+    <section class="contact" id="contact">
+        <div class="container">
+            <div class="contact-wrapper">
+                <div class="contact-info">
+                    <h2>Contactez-nous</h2>
+                    <p>Besoin d'informations supplémentaires ? N'hésitez pas à nous contacter.</p>
+                    
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <a href="tel:22371353548">(223) 71 35 35 48</a>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <a href="mailto:hmadistribution01@gmail.com">hmadistribution01@gmail.com</a>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <p>Rue 161, porte 111, Kalaban-Coura ACI, près de la mairie.</p>
+                    </div>
+                </div>
+                
+                <div class="contact-form">
+                    <h3>Envoyez-nous un message</h3>
+                    <form id="contact-form">
+                        <div class="form-group">
+                            <label for="name">Nom</label>
+                            <input type="text" id="name" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">Email(non obligatoire)</label>
+                            <input type="email" id="email">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="message">Message</label>
+                            <textarea id="message" rows="4" required></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary btn-block">Envoyer</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer" id="sociales">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <h3>Mini Market</h3>
+                    <p>Trouver chez nous vos provisions à mini prix.</p>
+                    <p class="copyright">© 2025 HMA Distribution. Tous droits réservés.</p>
+                </div>
+                
+                <div class="footer-links">
+                    <h3>Liens rapides</h3>
+                    <ul>
+                        <li><a href="#">Accueil</a></li>
+                        <li><a href="#all-products">Produits</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                        <li><a href="#sociales">Sociales</a></li>
+                        <li><a href="#" id="footer-admin-btn">Espace Admin(Reserver uniquement aux administrateurs).</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-hours">
+                    <h3>Heures d'ouverture</h3>
+                    <ul>
+                        <li>Tous les jours: 8h - 23h</li>
+                    </ul>
+                    
+                    <div class="social-links">
+                        <h4>Suivez-nous</h4>
+                        <div class="social-icons">
+                            <a href="https://www.tiktok.com/@hma.distri" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+                            <a href="https://www.instagram.com/hma.distribution" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                            <a href="https://www.facebook.com/hma.distribution" aria-label="Facebook" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                            <a href="https://wa.me/22371353548" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Shopping Cart Drawer -->
+    <div class="cart-drawer" id="cart-drawer">
+        <div class="cart-header">
+            <h2>Votre panier</h2>
+            <button class="close-cart" id="close-cart">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="cart-items" id="cart-items">
+            <!-- Cart items will be loaded here dynamically -->
+            <div class="empty-cart">
+                <i class="fas fa-shopping-bag"></i>
+                <p>Votre panier est vide</p>
+            </div>
+        </div>
+        
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Total:</span>
+                <span id="cart-total">0 FCFA</span>
+            </div>
+            
+            <button class="btn btn-primary btn-block" id="checkout-btn">
+                <i class="fab fa-whatsapp"></i> Commander via WhatsApp
+            </button>
+            
+            <button class="btn btn-outline btn-block btn-danger" id="clear-cart">
+                Vider le panier
+            </button>
+        </div>
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div class="modal" id="admin-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Connexion Admin</h2>
+                <button class="close-modal" id="close-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <form id="admin-login-form">
+                    <div class="form-group">
+                        <label for="username">Nom d'utilisateur</label>
+                        <input type="text" id="username" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Mot de passe</label>
+                        <input type="password" id="password" required>
+                    </div>
+                    
+                    <div class="form-error" id="login-error"></div>
+                    
+                    <button type="submit" class="btn btn-primary btn-block">Se connecter</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Backdrop for modals and drawer -->
+    <div class="backdrop" id="backdrop"></div>
+
+    <!-- Toast notification -->
+    <div class="toast" id="toast">
+        <div class="toast-content">
+            <i class="fas fa-check-circle toast-icon success"></i>
+            <div class="toast-message">Produit ajouté au panier avec succès!</div>
+        </div>
+        <div class="toast-progress"></div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/cart.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

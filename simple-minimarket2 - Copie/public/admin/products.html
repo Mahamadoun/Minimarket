@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Produits - Mini Market</title>
+    <meta name="description" content="Gérez les produits de Mini Market HMA Distribution.">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Notre CSS -->
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="admin-dashboard">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h1>Mini Market</h1>
+                <p>Panneau d'administration</p>
+            </div>
+            
+            <div class="sidebar-menu">
+                <h3>Menu</h3>
+                <ul>
+                    <li>
+                        <a href="dashboard.html">
+                            <i class="fas fa-tachometer-alt"></i> Tableau de bord
+                        </a>
+                    </li>
+                    <li>
+                        <a href="products.html" class="active">
+                            <i class="fas fa-box"></i> Produits
+                        </a>
+                    </li>
+                    <li>
+                        <a href="categories.html">
+                            <i class="fas fa-tags"></i> Catégories
+                        </a>
+                    </li>
+                    <li>
+                        <a href="users.html" id="users-link">
+                            <i class="fas fa-users"></i> Utilisateurs
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="sidebar-footer">
+                <button id="logout-btn" class="btn btn-outline btn-block">
+                    <i class="fas fa-sign-out-alt"></i> Déconnexion
+                </button>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <div id="product-list-view">
+                <div class="admin-header">
+                    <div class="admin-title">
+                        <h1>Gestion des Produits</h1>
+                        <p>Gérez les produits de votre boutique</p>
+                    </div>
+                    
+                    <div class="admin-actions">
+                        <a href="products.html?action=new" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Ajouter un produit
+                        </a>
+                        <button id="delete-selected-btn" class="btn btn-danger">
+                            <i class="fas fa-trash"></i> Supprimer la sélection
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="admin-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="select-all-products"></th>
+                                <th>Image</th>
+                                <th>Nom</th>
+                                <th>Catégorie</th>
+                                <th>Prix</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="products-list">
+                            <tr>
+                                <td colspan="5" class="text-center">Chargement...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div id="product-form-view" style="display: none;">
+                <div class="admin-header">
+                    <div class="admin-title">
+                        <h1 id="form-title">Ajouter un produit</h1>
+                    </div>
+                    
+                    <div class="admin-actions">
+                        <a href="products.html" class="btn btn-outline">
+                            <i class="fas fa-arrow-left"></i> Retour
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="admin-form">
+                    <form id="product-form">
+                        <input type="hidden" id="product-id" name="id">
+                        
+                        <div class="form-group">
+                            <label for="product-name">Nom du produit</label>
+                            <input type="text" id="product-name" name="name" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="product-description">Description</label>
+                            <textarea id="product-description" name="description" rows="4"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="product-price">Prix (FCFA)</label>
+                            <input type="number" id="product-price" name="price" required min="0">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="product-category">Catégorie</label>
+                            <select id="product-category" name="categoryId" required>
+                                <option value="">Sélectionner une catégorie</option>
+                                <!-- Les catégories seront ajoutées dynamiquement ici -->
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="product-image">Image du produit</label>
+                            <input type="file" id="product-image" name="image" accept="image/*">
+                            <h3>Aperçu de l'image</h3>
+                            <img id="image-preview" alt="Aucune image" style="max-width: 200px; margin-top: 10px;">
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">Enregistrer</button>
+                            <a href="products.html" class="btn btn-outline">Annuler</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast notification -->
+    <div class="toast" id="toast">
+        <div class="toast-content">
+            <i class="fas fa-check-circle toast-icon success"></i>
+            <div class="toast-message">Opération réussie!</div>
+        </div>
+        <div class="toast-progress"></div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../js/admin.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Récupérer les paramètres de l'URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const action = urlParams.get('action');
+            const productId = urlParams.get('id');
+            
+            // Charger les catégories pour le formulaire
+            loadCategories();
+            
+            // Si on a un ID de produit, charger ce produit pour l'édition
+            if (productId) {
+                loadProduct(productId);
+                document.getElementById('form-title').textContent = 'Modifier le produit';
+                showFormView();
+            }
+            // Si l'action est "new", afficher le formulaire d'ajout
+            else if (action === 'new') {
+                showFormView();
+            }
+            // Sinon, afficher la liste des produits
+            else {
+                showListView();
+                loadProducts();
+            }
+            
+            // Aperçu de l'image
+            const imageInput = document.getElementById('product-image');
+            const imagePreview = document.getElementById('image-preview');
+
+            if (imageInput && imagePreview) {
+                imageInput.addEventListener('change', function () {
+                    const file = this.files[0];
+
+                    if (file) {
+                        const reader = new FileReader();
+
+                        reader.onload = function (e) {
+                            imagePreview.src = e.target.result;
+                            imagePreview.alt = 'Aperçu de l\'image';
+                        };
+
+                        reader.readAsDataURL(file);
+                    } else {
+                        imagePreview.src = '';
+                        imagePreview.alt = 'Aucune image sélectionnée';
+                    }
+                });
+            }
+        });
+        
+        // Afficher la vue du formulaire
+        function showFormView() {
+            document.getElementById('product-list-view').style.display = 'none';
+            document.getElementById('product-form-view').style.display = 'block';
+        }
+        
+        // Afficher la vue de la liste
+        function showListView() {
+            document.getElementById('product-list-view').style.display = 'block';
+            document.getElementById('product-form-view').style.display = 'none';
+        }
+        
+        // Charger les catégories pour le select
+        async function loadCategories() {
+            try {
+                const response = await fetch('/api/categories');
+                
+                if (response.ok) {
+                    const categories = await response.json();
+                    const categorySelect = document.getElementById('product-category');
+                    
+                    if (categorySelect) {
+                        let options = '<option value="">Sélectionner une catégorie</option>';
+                        
+                        categories.forEach(category => {
+                            options += `<option value="${category.id}">${category.name}</option>`;
+                        });
+                        
+                        categorySelect.innerHTML = options;
+                    }
+                }
+            } catch (error) {
+                console.error('Erreur lors du chargement des catégories:', error);
+            }
+        }
+        
+        // Charger la liste des produits
+        async function loadProducts() {
+            const productsListElement = document.getElementById('products-list');
+            if (!productsListElement) return;
+
+            try {
+                const response = await fetch('/api/products');
+                if (!response.ok) throw new Error();
+
+                const products = await response.json();
+
+                const categoriesResponse = await fetch('/api/categories');
+                const categories = await categoriesResponse.json();
+                const categoryMap = {};
+                categories.forEach(category => {
+                    categoryMap[category.id] = category.name;
+                });
+
+                if (products.length === 0) {
+                    productsListElement.innerHTML = `
+                        <tr><td colspan="6" class="text-center">Aucun produit trouvé</td></tr>
+                    `;
+                    return;
+                }
+
+                productsListElement.innerHTML = products.map(product => `
+                    <tr>
+                        <td><input type="checkbox" class="select-product" value="${product.id}"></td>
+                        <td>
+                            <div class="table-image">
+                                <img src="${product.imageUrl}" alt="${product.name}">
+                            </div>
+                        </td>
+                        <td>${product.name}</td>
+                        <td>${categoryMap[product.categoryId] || 'Non catégorisé'}</td>
+                        <td>${Math.floor(product.price).toLocaleString()} FCFA</td>
+                        <td>
+                            <div class="action-buttons">
+                                <a href="products.html?id=${product.id}" class="edit-btn">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <button class="delete-btn" data-id="${product.id}" onclick="deleteProduct(${product.id})">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+
+            } catch (error) {
+                console.error('Erreur lors du chargement des produits:', error);
+                productsListElement.innerHTML = `
+                    <tr><td colspan="6" class="text-center">Erreur lors du chargement des produits</td></tr>
+                `;
+            }
+        }
+
+        
+        // Charger un produit spécifique pour l'édition
+        async function loadProduct(id) {
+            try {
+                const response = await fetch(`/api/products/${id}`);
+                
+                if (response.ok) {
+                    const product = await response.json();
+                    
+                    // Remplir le formulaire avec les données du produit
+                    document.getElementById('product-id').value = product.id;
+                    document.getElementById('product-name').value = product.name;
+                    document.getElementById('product-description').value = product.description || '';
+                    document.getElementById('product-price').value = product.price;
+                    document.getElementById('product-category').value = product.categoryId;
+                    document.getElementById('product-image').value = product.imageUrl;
+                    
+                    // Mettre à jour l'aperçu de l'image
+                    const imagePreview = document.getElementById('image-preview');
+                    if (imagePreview) {
+                        imagePreview.src = product.imageUrl;
+                        imagePreview.alt = product.name;
+                    }
+                } else {
+                    showToast('Erreur lors du chargement du produit', 'error');
+                }
+            } catch (error) {
+                console.error('Erreur lors du chargement du produit:', error);
+                showToast('Erreur lors du chargement du produit', 'error');
+            }
+        }
+
+
+        
+document.getElementById('product-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const name = document.getElementById('product-name').value;
+    const description = document.getElementById('product-description').value;
+    const price = document.getElementById('product-price').value;
+    const categoryId = document.getElementById('product-category').value;
+    const imageInput = document.getElementById('product-image');
+    const imageFile = imageInput.files[0];
+
+    if (!imageFile) {
+        showToast('Veuillez sélectionner une image', 'error');
+        return;
+    }
+
+    try {
+        // 1. Upload image
+        const imageData = new FormData();
+        imageData.append('image', imageFile);
+
+        const uploadRes = await fetch('/api/upload-image', {
+            method: 'POST',
+            body: imageData
+        });
+
+        const uploadJson = await uploadRes.json();
+        if (!uploadJson.success) {
+            showToast('Erreur lors du téléversement de l\'image', 'error');
+            return;
+        }
+
+        const imageUrl = uploadJson.imageUrl;
+
+        // 2. Envoie du produit
+        const productRes = await fetch('/api/products', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                name,
+                description,
+                price,
+                imageUrl,
+                categoryId
+            })
+        });
+
+        if (!productRes.ok) {
+            showToast('Erreur lors de l\'enregistrement du produit', 'error');
+            return;
+        }
+
+        // Succès : réinitialisation du formulaire
+        showToast('Produit ajouté avec succès', 'success');
+        document.getElementById('product-form').reset();
+        document.getElementById('image-preview').src = '';
+        document.getElementById('image-preview').alt = 'Aucune image';
+        document.getElementById('form-title').textContent = 'Ajouter un produit';
+        window.history.replaceState(null, '', 'products.html?action=new');
+        showFormView();
+        loadProducts(); // recharge la liste
+
+    } catch (err) {
+        console.error('Erreur JS :', err);
+        showToast('Erreur réseau', 'error');
+    }
+});
+
+
+document.getElementById('select-all-products').addEventListener('change', function () {
+    const checkboxes = document.querySelectorAll('.select-product');
+    checkboxes.forEach(cb => cb.checked = this.checked);
+});
+
+document.getElementById('delete-selected-btn').addEventListener('click', async function () {
+    const checked = [...document.querySelectorAll('.select-product:checked')];
+    if (checked.length === 0) {
+        alert('Aucun produit sélectionné.');
+        return;
+    }
+
+    if (!confirm('Supprimer les produits sélectionnés ?')) return;
+
+    const ids = checked.map(cb => cb.value);
+
+    try {
+        const response = await fetch('/api/products/bulk-delete', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ids })
+        });
+
+        if (response.ok) {
+            showToast('Produits supprimés avec succès', 'success');
+            loadProducts(); // Recharger la liste
+        } else {
+            showToast('Erreur lors de la suppression', 'error');
+        }
+    } catch (error) {
+        console.error('Erreur lors de la suppression :', error);
+        showToast('Erreur réseau', 'error');
+    }
+});
+
+
+        function initializePageView() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const action = urlParams.get('action');
+            const productId = urlParams.get('id');
+
+            if (productId) {
+                loadProduct(productId);
+                showFormView();
+            } else if (action === 'new') {
+                showFormView();
+            } else {
+                showListView();
+                loadProducts();
+            }
+        }
+
+    </script>
+</body>
+</html>
