@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     checkAuth();
     
     // Initialiser les événements
-    initEvents();
+    // initEvents();
     
     // Charger les données du tableau de bord
     loadDashboardData();
