@@ -10,9 +10,6 @@ const bcrypt = require('bcryptjs');
 // Initialisation de l'application Express
 const app = express();
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Serveur en écoute sur le port ${PORT}`);
-});
 
 // Configuration de la base de données PostgreSQL
 
