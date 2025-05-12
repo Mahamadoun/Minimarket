@@ -739,7 +739,7 @@ app.get('*', (req, res) => {
 // Initialiser la base de données avant de démarrer le serveur
 initDatabase()
     .then(() => {
-        app.listen(port, () => {
+        app.listen(PORT, () => {
             console.log(`Le serveur est démarré sur le port ${PORT}`);
         });
     })
