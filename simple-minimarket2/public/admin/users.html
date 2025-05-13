@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Utilisateurs - Mini Market</title>
+    <meta name="description" content="Gérez les utilisateurs et administrateurs de Mini Market HMA Distribution.">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Notre CSS -->
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="admin-dashboard">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h1>Mini Market</h1>
+                <p>Panneau d'administration</p>
+            </div>
+            
+            <div class="sidebar-menu">
+                <h3>Menu</h3>
+                <ul>
+                    <li>
+                        <a href="dashboard.html">
+                            <i class="fas fa-tachometer-alt"></i> Tableau de bord
+                        </a>
+                    </li>
+                    <li>
+                        <a href="products.html">
+                            <i class="fas fa-box"></i> Produits
+                        </a>
+                    </li>
+                    <li>
+                        <a href="categories.html">
+                            <i class="fas fa-tags"></i> Catégories
+                        </a>
+                    </li>
+                    <li>
+                        <a href="users.html" class="active" id="users-link">
+                            <i class="fas fa-users"></i> Utilisateurs
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="sidebar-footer">
+                <button id="logout-btn" class="btn btn-outline btn-block">
+                    <i class="fas fa-sign-out-alt"></i> Déconnexion
+                </button>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <div id="user-list-view">
+                <div class="admin-header">
+                    <div class="admin-title">
+                        <h1>Gestion des Utilisateurs</h1>
+                        <p>Gérez les utilisateurs administrateurs</p>
+                    </div>
+                    
+                    <div class="admin-actions">
+                        <a href="users.html?action=new" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Ajouter un utilisateur
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="admin-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nom d'utilisateur</th>
+                                <th>Rôle</th>
+                                <th>Dernière connexion</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-list">
+                            <tr>
+                                <td colspan="4" class="text-center">Chargement...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div id="user-form-view" style="display: none;">
+                <div class="admin-header">
+                    <div class="admin-title">
+                        <h1 id="form-title">Ajouter un utilisateur</h1>
+                    </div>
+                    
+                    <div class="admin-actions">
+                        <a href="users.html" class="btn btn-outline">
+                            <i class="fas fa-arrow-left"></i> Retour
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="admin-form">
+                    <form id="user-form">
+                        <input type="hidden" id="user-id" name="id">
+                        
+                        <div class="form-group">
+                            <label for="username">Nom d'utilisateur</label>
+                            <input type="text" id="username" name="username" required>
+                        </div>
+                        
+                        <div class="form-group" id="password-group">
+                            <label for="password">Mot de passe</label>
+                            <input type="password" id="password" name="password" required>
+                            <small id="password-help">Laissez vide pour conserver le mot de passe actuel</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="is-admin" name="isAdmin">
+                                <span>Administrateur</span>
+                            </label>
+                            <small>Peut gérer les produits et les catégories</small>
+                        </div>
+                        
+                        <div class="form-group" id="super-admin-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="is-super-admin" name="isSuperAdmin">
+                                <span>Super Administrateur</span>
+                            </label>
+                            <small>Peut gérer tous les utilisateurs et a tous les droits</small>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">Enregistrer</button>
+                            <a href="users.html" class="btn btn-outline">Annuler</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast notification -->
+    <div class="toast" id="toast">
+        <div class="toast-content">
+            <i class="fas fa-check-circle toast-icon success"></i>
+            <div class="toast-message">Opération réussie!</div>
+        </div>
+        <div class="toast-progress"></div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../js/admin.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Vérifier si l'utilisateur est super admin, sinon rediriger
+            checkSuperAdminRights();
+            
+            // Récupérer les paramètres de l'URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const action = urlParams.get('action');
+            const userId = urlParams.get('id');
+            
+            // Si on a un ID d'utilisateur, charger cet utilisateur pour l'édition
+            if (userId) {
+                loadUser(userId);
+                document.getElementById('form-title').textContent = 'Modifier l\'utilisateur';
+                document.getElementById('password-help').style.display = 'block';
+                document.getElementById('password').required = false;
+                showFormView();
+            }
+            // Si l'action est "new", afficher le formulaire d'ajout
+            else if (action === 'new') {
+                document.getElementById('password-help').style.display = 'none';
+                document.getElementById('password').required = true;
+                showFormView();
+            }
+            // Sinon, afficher la liste des utilisateurs
+            else {
+                showListView();
+                loadUsers();
+            }
+            
+            // Si on modifie un utilisateur existant, le mot de passe est optionnel
+            const userIdInput = document.getElementById('user-id');
+            const passwordInput = document.getElementById('password');
+            const passwordHelp = document.getElementById('password-help');
+            
+            if (userIdInput && passwordInput && passwordHelp) {
+                userIdInput.addEventListener('change', function() {
+                    if (this.value) {
+                        passwordInput.required = false;
+                        passwordHelp.style.display = 'block';
+                    } else {
+                        passwordInput.required = true;
+                        passwordHelp.style.display = 'none';
+                    }
+                });
+            }
+            
+            // Si on coche "super admin", cocher aussi "admin"
+            const adminCheckbox = document.getElementById('is-admin');
+            const superAdminCheckbox = document.getElementById('is-super-admin');
+            
+            if (superAdminCheckbox && adminCheckbox) {
+                superAdminCheckbox.addEventListener('change', function() {
+                    if (this.checked) {
+                        adminCheckbox.checked = true;
+                    }
+                });
+            }
+        });
+        
+        // Vérifier si l'utilisateur est super admin
+        async function checkSuperAdminRights() {
+            try {
+                const response = await fetch('/api/auth/me');
+                
+                if (response.ok) {
+                    const user = await response.json();
+                    
+                    if (!user.isSuperAdmin) {
+                        // Rediriger vers le tableau de bord si l'utilisateur n'est pas super admin
+                        window.location.href = 'dashboard.html';
+                        showToast('Accès non autorisé. Seuls les super administrateurs peuvent gérer les utilisateurs.', 'error');
+                    }
+                }
+            } catch (error) {
+                console.error('Erreur de vérification des droits super admin:', error);
+            }
+        }
+        
+        // Afficher la vue du formulaire
+        function showFormView() {
+            document.getElementById('user-list-view').style.display = 'none';
+            document.getElementById('user-form-view').style.display = 'block';
+        }
+        
+        // Afficher la vue de la liste
+        function showListView() {
+            document.getElementById('user-list-view').style.display = 'block';
+            document.getElementById('user-form-view').style.display = 'none';
+        }
+        
+        // Charger la liste des utilisateurs
+        async function loadUsers() {
+            const usersListElement = document.getElementById('users-list');
+            
+            if (!usersListElement) return;
+            
+            try {
+                const response = await fetch('/api/users');
+                
+                if (response.ok) {
+                    const users = await response.json();
+                    
+                    if (users.length === 0) {
+                        usersListElement.innerHTML = `
+                            <tr>
+                                <td colspan="4" class="text-center">Aucun utilisateur trouvé</td>
+                            </tr>
+                        `;
+                        return;
+                    }
+                    
+                    usersListElement.innerHTML = users.map(user => `
+                        <tr>
+                            <td>${user.username}</td>
+                            <td>
+                                ${user.isSuperAdmin ? '<span class="badge badge-super-admin">Super Admin</span>' : 
+                                  user.isAdmin ? '<span class="badge badge-admin">Admin</span>' : 
+                                  '<span class="badge badge-user">Utilisateur</span>'}
+                            </td>
+                            <td>${user.lastLogin ? new Date(user.lastLogin).toLocaleString() : 'Jamais'}</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <a href="users.html?id=${user.id}" class="edit-btn">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <button class="delete-btn" data-id="${user.id}" onclick="deleteUser(${user.id})">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `).join('');
+                    
+                } else {
+                    usersListElement.innerHTML = `
+                        <tr>
+                            <td colspan="4" class="text-center">Erreur lors du chargement des utilisateurs</td>
+                        </tr>
+                    `;
+                }
+            } catch (error) {
+                console.error('Erreur lors du chargement des utilisateurs:', error);
+                usersListElement.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="text-center">Erreur lors du chargement des utilisateurs</td>
+                    </tr>
+                `;
+            }
+        }
+        
+        // Charger un utilisateur spécifique pour l'édition
+        async function loadUser(id) {
+            try {
+                const response = await fetch(`/api/users/${id}`);
+                
+                if (response.ok) {
+                    const user = await response.json();
+                    
+                    // Remplir le formulaire avec les données de l'utilisateur
+                    document.getElementById('user-id').value = user.id;
+                    document.getElementById('username').value = user.username;
+                    document.getElementById('is-admin').checked = !!user.isAdmin;
+                    document.getElementById('is-super-admin').checked = !!user.isSuperAdmin;
+                } else {
+                    showToast('Erreur lors du chargement de l\'utilisateur', 'error');
+                }
+            } catch (error) {
+                console.error('Erreur lors du chargement de l\'utilisateur:', error);
+                showToast('Erreur lors du chargement de l\'utilisateur', 'error');
+            }
+        }
+    </script>
+</body>
+</html>
